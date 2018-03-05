@@ -3,7 +3,9 @@
 namespace app\controllers;
 
 use app\models\checkForm;
+use app\models\Country;
 use Yii;
+use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -133,10 +135,10 @@ class SiteController extends Controller
     public function actionEntry()
     {
         $model = new checkForm();
-        $list = Test::findOne('1');
+     /*   $list = Test::findOne('1');
         $list->name='rzy';
         $list->save();
-        print_r($list['name']);exit;
+        print_r($list['name']);exit;*/
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             // 验证 $model 收到的数据
             // 做些有意义的事 ...
@@ -149,6 +151,20 @@ class SiteController extends Controller
 
     public function actionTest()
     {
+        $data = Country::find();
+        $page = new Pagination([
+            'defaultPageSize'=>2,
+            'totalCount'    =>$data->count()
+        ]);
+
+        $list = $data->orderBy('population')->offset($page->offset)->limit($page->limit)->all();
+
+        return $this->render('test',[
+                'list'=>$list,
+                'page'=>$page
+            ]
+            );
+
 
     }
 
